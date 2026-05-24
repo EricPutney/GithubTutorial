@@ -10,7 +10,7 @@ from .base import FallingItem
 class Star(FallingItem):
     radius = 16
     color = (250, 210, 60)
-    fall_speed = 4
+    base_fall_speed = 4
 
     def draw(self, surface):
         points = []
@@ -20,6 +20,6 @@ class Star(FallingItem):
             points.append((self.x + r * math.cos(angle), self.y + r * math.sin(angle)))
         pygame.draw.polygon(surface, self.color, points)
 
-    def on_caught(self, game):
+    def on_collect(self, game):
         game.score += 3
-        super().on_caught(game)
+        super().on_collect(game)

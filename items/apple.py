@@ -18,6 +18,6 @@ class Apple(FallingItem):
             (self.x - 2, self.y - self.radius - 4, 4, 5),
         )
 
-    def on_caught(self, game):
+    def on_collect(self, game):
         game.score += 1
-        super().on_caught(game)
+        super().on_collect(game)

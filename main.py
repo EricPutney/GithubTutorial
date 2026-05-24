@@ -68,15 +68,25 @@ class Game:
         self.game_over = False
 
     def spawn_item(self):
-        cls = random.choice(ITEMS)
+        # 80% chance of a good item, 20% bad. If "bad" is empty (default
+        # before participants add bombs etc.), fall back to good.
+        category = "good"
+        if ITEMS.get("bad") and random.random() < 0.2:
+            category = "bad"
+        cls = random.choice(ITEMS[category])
         x = random.randint(20, WIDTH - 20)
-        self.items.append(cls(x, 0))
+        # weight varies a little so items don't all fall at the same speed
+        weight = random.uniform(0.8, 1.3)
+        # NOTE: keyword args here. Items built against the old (x, y) signature
+        # will fail loudly with "unexpected keyword argument 'pos'", forcing
+        # contributors to update their __init__ to the new signature.
+        self.items.append(cls(pos=(x, 0), weight=weight))
 
     def update(self):
         for item in self.items:
             item.update()
             if self.basket.catches(item):
-                item.on_caught(self)
+                item.on_collect(self)
             elif item.y > HEIGHT:
                 item.on_missed(self)
         self.items = [it for it in self.items if it.alive]
