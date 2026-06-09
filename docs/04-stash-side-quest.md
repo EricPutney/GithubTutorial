@@ -2,8 +2,9 @@
 
 **Scenario:** Your PR is open. You decided to tweak the bomb's color, so you've
 got uncommitted changes in your working directory. *Right then*, your
-instructor announces a small fix has landed on upstream `main` that everyone
-needs to pull. But your changes aren't ready to commit.
+instructor announces a small fix has landed on upstream `main` —
+**press R to restart after game over**. Everyone wants it. But your changes
+aren't ready to commit.
 
 You can't pull on top of dirty working tree changes — Git will refuse. You
 have three options:
@@ -45,16 +46,28 @@ git stash list
 
 ## 3. Pull the upstream fix
 
+Same routine as [Bonus 1 — sync your fork](bonus-1-reflog-and-sync-fork.md): update
+local main from upstream, push it to your fork to keep them in sync, then
+merge main into your feature branch.
+
 ```bash
 git checkout main
-git pull upstream main
+git pull upstream main            # download + apply upstream's new commits
+git push origin main              # keep your fork's main in sync with upstream
 git checkout feature/bomb-item
-git merge main           # bring main's fix into your feature branch
+git merge main                    # bring the fix into your feature branch
 ```
 
 > **Why merge main into the feature branch?** So your branch is up-to-date
 > with the fix before you keep working. Otherwise you'd be building on top
 > of stale main, and you'd hit the conflict later when you try to merge.
+>
+> **Why also push origin/main?** Without it, your fork's `main` drifts behind
+> upstream's. Anyone cloning your fork would get old code, and your next
+> feature branch would start from the wrong place. Cheap habit, big payoff.
+
+Run the game once after the merge — you should now be able to press **R**
+to restart after game over.
 
 ## 4. Pop your stash back
 
