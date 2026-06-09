@@ -14,13 +14,59 @@ Wait for your instructor to confirm `newupdate` has been merged into
 
 ---
 
-## 1. Pull the new upstream/main onto your feature branch
+## 1. Sync your fork's main, then merge it into your feature branch
 
-You're still on `feature/<your-thing>`. Bring in the upstream changes:
+There are two halves to this: get the new upstream code into your fork's
+`main`, then carry that into your feature branch.
+
+### 1a. Look before you leap (optional but recommended): `git fetch`
 
 ```bash
-git fetch upstream                  # downloads new commits but doesn't apply them
-git merge upstream/main             # apply them on top of your branch
+git fetch upstream                  # download upstream's new commits but apply nothing
+```
+
+`git fetch` is the "download only" command. It updates your local idea of
+`upstream/main` without touching any of your branches. After fetching you
+can peek at what's coming:
+
+```bash
+git log main..upstream/main --oneline    # commits upstream has that you don't
+git diff main..upstream/main             # the actual changes
+```
+
+This is useful when you're about to pull something risky — you can see the
+scope first.
+
+### 1b. Update your fork's main from upstream
+
+`git pull` is just `git fetch` + `git merge` rolled together. Either of
+these works (the first is more explicit, the second is the shortcut):
+
+```bash
+git checkout main
+git merge upstream/main             # apply what we already fetched
+git push origin main                # push the updated main to your fork
+```
+
+…or equivalently:
+
+```bash
+git checkout main
+git pull upstream main              # fetch + merge in one command
+git push origin main
+```
+
+> **Why push to `origin/main`?** Without that step, your fork's `main` drifts
+> out of sync with upstream — anyone cloning your fork would get stale code,
+> and your next feature branch would start from the wrong place. This is
+> exactly the routine [Bonus 1](bonus-1-reflog-and-sync-fork.md) covers in
+> more detail.
+
+### 1c. Merge the updated main into your feature branch
+
+```bash
+git checkout feature/<your-thing>
+git merge main                      # bring main's new commits onto your branch
 ```
 
 You'll see something like:
