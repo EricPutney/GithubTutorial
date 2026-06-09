@@ -76,6 +76,7 @@ class Game:
         self.score = 0
         self.misses = 0
         self.game_over = False
+        self.magnet_until = 0
 
     def spawn_item(self):
         # 80% chance of a good item, 20% bad. If "bad" is empty (default
@@ -93,8 +94,15 @@ class Game:
         self.items.append(cls(pos=(x, 0), weight=weight))
 
     def update(self):
+        magnet_active = pygame.time.get_ticks() < self.magnet_until
+        basket_center = self.basket.x + self.basket.width // 2
         for item in self.items:
             item.update()
+            if magnet_active:
+                if item.x < basket_center:
+                    item.x = min(item.x + 3, basket_center)
+                elif item.x > basket_center:
+                    item.x = max(item.x - 3, basket_center)
             if self.basket.catches(item):
                 item.on_collect(self)
             elif item.y > HEIGHT:
@@ -188,18 +196,6 @@ class Game:
                 self.update()
 
             self.draw()
-
-# Game.reset():
-self.magnet_until = 0
-
-# Game.update(), after item.update() but before catch-detection:
-if pygame.time.get_ticks() < self.magnet_until:
-    basket_center = self.basket.x + self.basket.width // 2
-    for item in self.items:
-        if item.x < basket_center:
-            item.x += 3
-        elif item.x > basket_center:
-            item.x -= 3
 
 
 if __name__ == "__main__":
